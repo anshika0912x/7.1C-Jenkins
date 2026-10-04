@@ -1,60 +1,50 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('H/2 * * * *')
+    environment {
+        DIRECTORY_PATH = '/var/jenkins_home/workspace/app'
+        TESTING_ENVIRONMENT = 'Testing'
+        PRODUCTION_ENVIRONMENT = 'Anshika'
     }
 
     stages {
-
         stage('Build') {
             steps {
-                echo 'Task: Compile and package the application'
-                echo 'Tool: Maven'
+                echo "Fetch the source code from the directory path specified by the environment variable: ${DIRECTORY_PATH}"
+                echo "Compile the code and generate any necessary artefacts"
             }
         }
 
-        stage('Unit and Integration Tests') {
+        stage('Test') {
             steps {
-                echo 'Task: Run unit tests and integration tests'
-                echo 'Tools: JUnit and Selenium'
+                echo "Unit tests"
+                echo "Integration tests"
             }
         }
 
-        stage('Code Analysis') {
+        stage('Code Quality Check') {
             steps {
-                echo 'Task: Analyse the code and ensure it meets industry standards'
-                echo 'Tool: SonarQube'
+                echo "Check the quality of the code"
             }
         }
 
-        stage('Security Scan') {
+        stage('Deploy') {
             steps {
-                echo 'Task: Scan the code for security vulnerabilities'
-                echo 'Tool: OWASP Dependency-Check'
+                echo "Deploy the application to a testing environment specified by the environment variable: ${TESTING_ENVIRONMENT}"
             }
         }
 
-        stage('Deploy to Staging') {
+        stage('Approval') {
             steps {
-                echo 'Task: Deploy the application to a staging server'
-                echo 'Tool: AWS EC2'
-            }
-        }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Task: Run integration tests in the staging environment'
-                echo 'Tool: Selenium'
+                echo "Waiting for approval..."
+                sleep time: 10, unit: 'SECONDS'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Task: Deploy the application to a production server'
-                echo 'Tool: AWS EC2'
+                echo "Deploy the application to the production environment: ${PRODUCTION_ENVIRONMENT}"
             }
         }
-
     }
 }
